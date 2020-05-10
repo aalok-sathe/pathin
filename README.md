@@ -1,11 +1,25 @@
-# pathin
+# pathin (पथिन्)
 
-a convenient utility to add directories to your PATH variable
+a convenient utility to add arbitrary directories to your PATH variable
 keeps track of your rc file (e.g., .bashrc, .bash_profile), 
 and optionally a separate paths file (suggested: .bash_paths), 
 and stores PATH variable values in pathin config (.pathin).
 
-allows you to navigate to any directory and simply call the script to add it to PATH
+allows you to navigate to any directory and simply call this utility to add it to PATH.
+intended for Linux and Unix-based OSes.
+
+
+
+## Install pathin (also quick-start example!)
+
+```
+  git clone https://github.com/aalok-sathe/pathin.git
+  cd pathin
+  ./pathin configure
+  ./pathin add
+  source PATH/TO/YOUR_SHELL_CONFIG  #(e.g. source ~/.bashrc)
+```
+
 
 ## Usage
 
@@ -53,7 +67,3 @@ Options:
   --directory PATH  directory to add to path
   -h, --help        Show this message and exit.
 ```
-
-## Install
-
-  pip install pathin
