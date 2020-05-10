@@ -113,7 +113,7 @@ def add(directory):
         
     with bash_config_file.open('r') as rcfile:
         rctxt = rcfile.read()
-    if bash_paths_file.name not in rctxt:
+    if bash_paths_file.name not in rctxt + bash_config_file.name:
         with open(str(bash_config_file) + '.bak', 'w+') as backup:
             print(rctxt, file=backup)
         with bash_config_file.open('a') as rcfile:
