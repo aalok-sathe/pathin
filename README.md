@@ -1,9 +1,10 @@
 # pathin (पथिन्)
 
 a convenient utility to add arbitrary directories to your PATH variable
-keeps track of your rc file (e.g., .bashrc, .bash_profile), 
-and optionally a separate paths file (suggested: .bash_paths), 
-and stores PATH variable values in pathin config (.pathin).
+
+keeps track of your rc file(s) (e.g., `.bashrc`, `.bash_profile`), 
+and optionally a separate paths file (suggested: `.bash_paths`), 
+and stores PATH variable values in pathin config (`.pathin`).
 
 allows you to navigate to any directory and simply call this utility to add it to PATH.
 intended for Linux and Unix-based OSes.
