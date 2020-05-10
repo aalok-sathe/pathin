@@ -12,7 +12,7 @@ pretty = PP(indent=4).pformat
 
 def config(cfgdict=None):
     ''' get the current config options '''
-    config = Path('~/.pathin').expanduser().resolve()
+    config = Path('~/.pathin').expanduser()
     config.mkdir(parents=True, exist_ok=True)
     config /= 'config.json'
     if not config.exists(): config.touch()
@@ -117,7 +117,14 @@ def add(directory):
         with open(str(bash_config_file) + '.bak', 'w+') as backup:
             print(rctxt, file=backup)
         with bash_config_file.open('a') as rcfile:
-            cmd = 'source {}'.format(bash_paths_file)
+            cmd = '''
+# Path definitiions
+if [ -f {pathsf} ]; then
+    . {pathsf}
+    export PATH
+fi
+            '''
+            cmd.format(pathsf=bash_paths_file)
             print(cmd, file=rcfile, sep='\n')
 
     config(cfg)
