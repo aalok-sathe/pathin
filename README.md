@@ -15,6 +15,8 @@ intended for Linux and Unix-based OSes.
 ```
   git clone https://github.com/aalok-sathe/pathin.git
   cd pathin
+  pip install -r requirements.txt
+  
   ./pathin configure
   ./pathin add
   source PATH/TO/YOUR_SHELL_CONFIG  #(e.g. source ~/.bashrc)
