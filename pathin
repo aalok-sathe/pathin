@@ -108,7 +108,8 @@ def add(directory):
     os.environ.update({'PATH': ':'.join(cfg['path'])})
 
     with bash_paths_file.open('a+') as f:
-        toadd = '\nPATH=$PATH:{}\nexport PATH'.format(directory)
+        toadd = '\n# {}\nPATH=$PATH:{}\nexport PATH'.format(directory.name, 
+                                                            directory)
         print(toadd, file=f)
         
     with bash_config_file.open('r') as rcfile:
@@ -129,9 +130,11 @@ fi
 
     config(cfg)
 
-    print('added', directory, 'to path')
+    print()
+    print('added', directory, 'to path!')
+    print()
     print('NOTE! you will need to run\n\tsource {}\n'.format(bash_config_file), 
-          'for each shell session or otherwise reboot')
+          'for each shell session or otherwise reboot your system for changes')
     
 
 
