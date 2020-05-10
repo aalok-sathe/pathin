@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+
+import json
+import click
+import os
+from pprint import PrettyPrinter as PP
+from pathlib import Path
+from collections import defaultdict
+
+pretty = PP(indent=4).pformat
+
+
+def config(cfgdict=None):
+    ''' get the current config options '''
+    config = Path('~/.pathin').expanduser().resolve()
+    config.mkdir(parents=True, exist_ok=True)
+    config /= 'config.json'
+    if not config.exists(): config.touch()
+
+    if not type(cfgdict) in (dict, defaultdict):
+        with config.open('r') as fp:
+            cfgdict = defaultdict(list)
+            try:
+                cfgdict.update(json.load(fp))
+            except json.JSONDecodeError:
+                pass
+            except TypeError:
+                pass
+        cfgdict['path'] += [p for p in os.environ['PATH'].split(':') if
+                            p not in cfgdict['path']]
+        return cfgdict
+    else:
+        with config.open('w+') as fp:
+            json.dump(cfgdict, fp, indent=4)
+        print('saved config', pretty(dict(**cfgdict)), sep='\n')
+        return cfgdict
+
+
+
+@click.group()
+@click.help_option('-h', '--help')
+def cli():
+    '''
+    pathin.
+    conveniently add a directory to your System PATH.
+
+    for help on commands, type "pathin <command> -h",
+    e.g., pathin add -h
+    '''
+    return
+
+ 
+@cli.command()
+@click.option('--show', is_flag=True, default=False, is_eager=True,
+              callback=lambda c,v: v and (print(pretty(config())) or exit()), 
+              help='display current config and exit')
+@click.option('--bash-config-file', prompt=True, default='~/.bashrc', type=Path,
+              help='bash config file path (e.g., ~/.bashrc)')
+@click.option('--bash-paths-file', prompt=True, default='~/.bash_paths', 
+              type=Path,
+              help='bash paths file path (e.g., ~/.bash_paths or ~/.bashrc)')
+@click.option('--reset', help='reset configuration', is_flag=True,
+              default=False, is_eager=True, 
+              callback=lambda c,v: v and (config({}) or exit()))
+@click.help_option('-h', '--help')
+def configure(bash_config_file, bash_paths_file, **kwargs):
+    ''' configure pathin's defaults '''
+    cfg = config()
+
+    bash_config_file = bash_config_file.expanduser()
+    bash_paths_file = bash_paths_file.expanduser()
+
+    bash_config_file.touch()
+    bash_paths_file.touch()
+
+    cfg.update({
+            'rcfile': str(bash_config_file),
+            'pathsfile': str(bash_paths_file),
+            'path': cfg['path']
+        })
+
+    config(cfg)
+
+
+@cli.command()
+@click.option('--directory', prompt=True, default=os.getcwd(), type=Path,
+              help='directory to add to path')
+@click.help_option('-h', '--help')
+def add(directory):
+    ''' add a directory to path (default: pwd) '''
+    cfg = config()
+    directory = Path(directory).expanduser()
+
+    if str(directory) in cfg['path']:
+        print(directory, 'is already in PATH')
+        return
+
+    try:
+        bash_paths_file = Path(cfg['pathsfile']).expanduser()
+        bash_paths_file.touch()
+        bash_config_file = Path(cfg['rcfile']).expanduser()
+        bash_config_file.touch()
+    except TypeError:
+        print('please run "configure" command first!')
+        return
+
+    cfg['path'] += [str(directory)]
+    os.environ.update({'PATH': ':'.join(cfg['path'])})
+
+    with bash_paths_file.open('a+') as f:
+        toadd = '\nPATH=$PATH:{}\nexport PATH'.format(directory)
+        print(toadd, file=f)
+        
+    with bash_config_file.open('r') as rcfile:
+        rctxt = rcfile.read()
+    if bash_paths_file.name not in rctxt:
+        with open(str(bash_config_file) + '.bak', 'w+') as backup:
+            print(rctxt, file=backup)
+        with bash_config_file.open('a') as rcfile:
+            cmd = 'source {}'.format(bash_paths_file)
+            print(cmd, file=rcfile, sep='\n')
+
+    config(cfg)
+
+    print('added', directory, 'to path')
+    print('NOTE! you will need to run\n\tsource {}\n'.format(bash_config_file), 
+          'for each shell session or otherwise reboot')
+    
+
+
+if __name__ == '__main__':
+    cli()
