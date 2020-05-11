@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 
+################################################################
+info = '''pathin. पथिन्
+a handy command-line utility to add a directory to PATH.
+(C) 2020, Aalok S.
+MIT License
+
+homepage:   https://github.com/aalok-sathe/pathin.git
+'''                                                            #
+################################################################
+
 import json
 import click
 import os
-from pprint import PrettyPrinter as PP
+
 from pathlib import Path
 from collections import defaultdict
+from pprint import PrettyPrinter as PP
 
 pretty = PP(indent=4).pformat
 
-
+################################################################
 def config(cfgdict=None):
     ''' get the current config options '''
     config = Path('~/.pathin').expanduser()
@@ -37,6 +48,7 @@ def config(cfgdict=None):
 
 
 
+################################################################
 @click.group()
 @click.help_option('-h', '--help')
 def cli():
@@ -49,7 +61,8 @@ def cli():
     '''
     return
 
- 
+
+################################################################
 @cli.command()
 @click.option('--show', is_flag=True, default=False, is_eager=True,
               callback=lambda c,v: v and (print(pretty(config())) or exit()), 
@@ -82,6 +95,7 @@ def configure(bash_config_file, bash_paths_file, **kwargs):
     config(cfg)
 
 
+################################################################
 @cli.command()
 @click.option('--directory', prompt=True, default=os.getcwd(), type=Path,
               help='directory to add to path')
@@ -138,5 +152,6 @@ fi
     
 
 
+################################################################
 if __name__ == '__main__':
     cli()
