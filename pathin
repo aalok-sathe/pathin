@@ -139,7 +139,7 @@ if [ -f {pathsf} ]; then
     export PATH
 fi
             '''
-            cmd.format(pathsf=bash_paths_file)
+            cmd = cmd.format(pathsf=bash_paths_file)
             print(cmd, file=rcfile, sep='\n')
 
     config(cfg)
