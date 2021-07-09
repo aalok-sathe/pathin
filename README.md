@@ -70,3 +70,8 @@ Options:
   --directory PATH  directory to add to path
   -h, --help        Show this message and exit.
 ```
+
+## Example
+
+Here's an example added on the suggestion of @rohan999chaudhary.
+![](https://i.imgur.com/qrhxpZQ.png)
