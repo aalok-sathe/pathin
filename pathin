@@ -122,7 +122,10 @@ def add(directory):
     os.environ.update({'PATH': ':'.join(cfg['path'])})
 
     with bash_paths_file.open('a+') as f:
-        toadd = '\n# {}\nPATH=$PATH:{}\nexport PATH'.format(directory.name, 
+        #toadd = '\n# {}\nPATH=$PATH:{}\nexport PATH'.format(directory.name, 
+        #                                                    directory)
+        # add before rather than after
+        toadd = '\n# {}\nPATH={}:$PATH\nexport PATH'.format(directory.name, 
                                                             directory)
         print(toadd, file=f)
         
